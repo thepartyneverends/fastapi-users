@@ -29,6 +29,12 @@ app.include_router(
     tags=["auth"],
 )
 
+app.include_router(
+    fastapi_users.get_verify_router(UserRead),
+    prefix='/auth',
+    tags=['/auth']
+)
+
 current_user = fastapi_users.current_user()
 
 
@@ -42,6 +48,6 @@ def unprotected_route():
     return f"Hello, anonym"
 
 
-@app.get('/{user_id}/is-verified')
+@app.get('/is-verified')
 def if_user_verified(user: User = Depends(current_user)):
     return 'You are verified ;)' if user.is_verified is True else 'You are not verified :('
