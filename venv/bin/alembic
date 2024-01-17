@@ -1,4 +1,4 @@
-#!/home/user/PycharmProjects/fastapi-users/venv/bin/python3
+#!/home/thepartyneverends/PycharmProjects/fastapi-users/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

@@ -1,8 +1,10 @@
 from fastapi_users import FastAPIUsers
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
+from starlette.responses import HTMLResponse
+from starlette.templating import Jinja2Templates
 
 import crud
 from auth.auth import auth_backend
@@ -11,6 +13,8 @@ from auth.manager import get_user_manager
 from auth.schemas import UserRead, UserCreate
 
 app = FastAPI()
+
+templates = Jinja2Templates(directory='templates')
 
 fastapi_users = FastAPIUsers[User, int](
     get_user_manager,
@@ -40,7 +44,7 @@ current_user = fastapi_users.current_user()
 
 @app.get("/protected-route")
 def protected_route(user: User = Depends(current_user)):
-    return f"Hello, {user.__name__}"
+    return f"Hello, {user.username}"
 
 
 @app.get("/unprotected-route")
@@ -51,3 +55,8 @@ def unprotected_route():
 @app.get('/is-verified')
 def if_user_verified(user: User = Depends(current_user)):
     return 'You are verified ;)' if user.is_verified is True else 'You are not verified :('
+
+
+@app.get('/', response_class=HTMLResponse)
+def main(request: Request, user: User = Depends(current_user)):
+    return templates.TemplateResponse('index.html', {'request': request, 'user': user})
